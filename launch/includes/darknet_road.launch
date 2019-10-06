@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Console launch prefix -->
+  <arg name="launch_prefix"         default=""/>
+  <!-- <arg name="source"                default="/dev/video1"/> -->
+  <arg name="source"                default="/dev/video1"/>
+  <arg name="config"                default="yolov3-road.yaml"/>
+  <arg name="standalone"            default="true" /> 
+  <arg name="jetson"                default="true" /> 
+  <arg name="display"                default="true" /> 
+
+
+
+
+  <!-- Config and weights folder. -->
+  <arg name="yolo_weights_path"          default="$(find myride_bringup)/darknet/weights"/>
+  <arg name="yolo_config_path"           default="$(find darknet_ros)/yolo_network_config/cfg"/>
+
+  <!-- ROS and network parameter files -->
+  <arg name="ros_param_file"             default="$(find myride_bringup)/darknet/yaml/ros.yaml"/>
+  <arg name="network_param_file"         default="$(find myride_bringup)/darknet/yaml/$(arg config)"/>
+
+  <!-- Load parameters -->
+  <rosparam command="load" ns="darknet_ros" file="$(arg ros_param_file)"/>
+  <rosparam command="load" ns="darknet_ros" file="$(arg network_param_file)"/>
+
+  
+  <node if="$(arg jetson)" name="maxpwr" pkg="myride_system_configuration" type="max_perf" />
+
+
+  <!-- Start darknet and ros wrapper -->
+  <node if="$(arg standalone)" pkg="darknet_ros" type="darknet_ros" name="darknet_ros" output="screen" launch-prefix="$(arg launch_prefix)">
+    <param name="weights_path"          value="$(arg yolo_weights_path)" />
+    <param name="config_path"           value="$(arg yolo_config_path)" />
+    <param name="config_path"           value="$(arg yolo_config_path)" />
+    <param name="image_view/enable_opencv"  value="$(arg display)" />
+    <remap from="/camera/rgb/image_raw" to="$(arg source)"/>
+  </node>
+
+  <node unless="$(arg standalone)" pkg="darknet_ros" type="darknet_ros" name="darknet_ros" launch-prefix="$(arg launch_prefix)">
+    <param name="weights_path"              value="$(arg yolo_weights_path)" />
+    <param name="config_path"               value="$(arg yolo_config_path)" />
+    <param name="image_view/enable_opencv"  value="$(arg display)" />
+    <remap from="/camera/rgb/image_raw" to="$(arg source)"/>
+  </node>
+ <!--<node name="republish" type="republish" pkg="image_transport" output="screen" 	args="compressed in:=/front_camera/image_raw raw out:=/camera/image_raw" /> -->
+</launch>

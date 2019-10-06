@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <arg name="transport" default="raw"/>
+    <arg name="addr" default="$(env ROS_HOSTNAME)"/>
+    <arg name="port" default="8080"/>
+
+    <node pkg="web_video_server" type="web_video_server" name="img_server">
+        <param name="address"        value="$(arg addr)" />
+        <param name="port"           value="$(arg port)" />
+
+        <!-- <param name="width"          value="$(arg width)" /> -->
+        <!-- <param name="height"           value="$(arg height)" /> -->
+        <param name="default_transport"           value="$(arg transport)" />
+    </node>
+
+</launch>

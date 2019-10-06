@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Flags -->
+  <arg name="mapping"               default="false"/> 
+  <arg name="display"               default="false" />
+  <arg name="odom"                  default="$(arg mapping)"/> 
+  <arg name="server"                default="true"/> 
+  <arg name="zed"                   default="true"/> 
+  <arg name="yolo"                  default="true"/> 
+
+  <!-- Zed -->
+  <arg name="zed_ns"		    	    default="zed" />
+  <arg name="zed_node_name"       default="zed_node" />
+  <arg name="channel"             default="rgb/image_rect_color"/>
+  <arg name="dev"                 default="1"/>
+
+
+  <!-- YOLO -->
+  <arg if="$(arg zed)"        name="source"         value="$(arg zed_ns)/$(arg zed_node_name)/$(arg channel)" />
+  <arg unless="$(arg zed)"    name="source"         value="usb_cam/image_raw" />
+
+  <arg name="launch_prefix"         default=""/>
+  <arg name="config"                default="yolov3-road.yaml"/>
+  <arg name="fix_z" 	              default="true"/> 
+
+  <!-- Config and weights folder. -->
+  <!-- <arg name="yolo_weights_path"          default="$(find darknet_ros)/yolo_network_config/weights"/>
+  <arg name="yolo_config_path"           default="$(find darknet_ros)/yolo_network_config/cfg"/> -->
+
+  <!-- Launch Zed or USBCAM-->
+  <group if="$(arg zed)">
+    <include unless="$(arg mapping)" file="$(find zed_wrapper)/launch/zed.launch" >
+    </include>
+
+    <include if="$(arg mapping)" file="$(dirname)/includes/zed_mapping.launch" >
+          <arg name="zed_namespace"		    	    value="$(arg zed_ns)" />
+          <arg name="zed_node_name"             value="$(arg zed_node_name)" />
+
+          <arg name="odom" 	                    value="$(arg odom)"/> 
+          <arg name="display" 	                value="$(arg display)"/> 
+
+          <arg name="mapping" 	                value="$(arg mapping)"/> 
+          <arg name="fix_z" 	                  value="$(arg fix_z)"/> 
+
+    </include>
+  </group>
+
+  <include unless="$(arg zed)" file="$(dirname)/includes/usb_cam.launch" >
+    <arg name="dev" default="$(arg dev)" />
+    <arg name="width" default="640" />
+    <arg name="height" default="480" />	             
+
+  </include>
+
+<!-- Darknet YOLO v3 -->
+
+ <include if="$(arg yolo)" file="$(dirname)/includes/darknet_road.launch" >
+          <arg name="launch_prefix" 	          value="$(arg launch_prefix)"/> 
+          <arg name="config" 	                  value="$(arg config)"/>
+          <arg name="standalone" 	              value="false"/> 
+          <arg name="source" 	                  value="$(arg source)"/> 
+          <arg name="display" 	                value="$(arg display)"/> 
+  </include>
+
+  <include if="$(arg server)" file="$(dirname)/includes/video_server.launch" >
+	        <arg name="port" 	                    value="8080"/> 
+
+  </include>
+</launch>

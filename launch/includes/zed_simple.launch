@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <!-- Console launch prefix -->
+
+    <arg name="odom" 	default="false"/> 
+
+    <!-- Launch Zed -->
+    <include file="$(find zed_wrapper)/launch/zed.launch" >
+        <!-- 2d mode and mapping -->
+        <arg name="publish_urdf" 	value="$(arg odom)"/> 
+        <!-- <param name="two_d_mode" 	value="true"/>  -->
+        <!-- <param name="fixed_z_value"	value="0.7"/> -->
+    </include>
+
+ </launch>
+
