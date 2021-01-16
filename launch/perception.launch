@@ -33,7 +33,7 @@
     <include unless="$(arg mapping)" file="$(find zed_wrapper)/launch/zed.launch" >
     </include>
 
-    <include if="$(arg mapping)" file="$(dirname)/includes/zed_mapping.launch" >
+    <include if="$(arg mapping)" file="$(dirname)/include/zed_mapping.launch" >
           <arg name="zed_namespace"		    	    value="$(arg zed_ns)" />
           <arg name="zed_node_name"             value="$(arg zed_node_name)" />
 
@@ -46,7 +46,7 @@
     </include>
   </group>
 
-  <include unless="$(arg zed)" file="$(dirname)/includes/usb_cam.launch" >
+  <include unless="$(arg zed)" file="$(dirname)/include/usb_cam.launch" >
     <arg name="dev" default="$(arg dev)" />
     <arg name="width" default="640" />
     <arg name="height" default="480" />	             
@@ -55,7 +55,7 @@
 
 <!-- Darknet YOLO v3 -->
 
- <include if="$(arg yolo)" file="$(dirname)/includes/darknet_road.launch" >
+ <include if="$(arg yolo)" file="$(dirname)/include/darknet_road.launch" >
           <arg name="launch_prefix" 	          value="$(arg launch_prefix)"/> 
           <arg name="config" 	                  value="$(arg config)"/>
           <arg name="standalone" 	              value="false"/> 
@@ -63,7 +63,7 @@
           <arg name="display" 	                value="$(arg display)"/> 
   </include>
 
-  <include if="$(arg server)" file="$(dirname)/includes/video_server.launch" >
+  <include if="$(arg server)" file="$(dirname)/include/video_server.launch" >
 	        <arg name="port" 	                    value="8080"/> 
 
   </include>
