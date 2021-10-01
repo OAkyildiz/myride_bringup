@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <remap from="zed/rgb/image_rect_color" to="zed/image_raw"/>
+    <!-- TODO: Put the remap into server node -->
+    <!-- TODO: Stream directly from zed -->
+    <!-- TODO:for lite, launch zed as usb_cam. maybe another launch file instead of an if block -->
+
+    <arg name="svo_file"           default=""/>
+
+    <include file="$(dirname)/include/zed_no_tf.launch">
+        <arg name="node_name"           value="zed"/>
+        <arg name="publish_urdf"        value="false" />
+        <arg name="param_file"           value="720p"/>
+        <arg name="svo_file"           value="$(arg svo_file)"/>
+
+        <!-- <arg if="$(arg stream)" name="stream"     value="$(env ROS_IP):8000"/> -->
+
+        <!-- <remap from="/zed/rgb/image_rect_color" to="zed/image_raw"/> -->
+
+    </include>
+</launch>

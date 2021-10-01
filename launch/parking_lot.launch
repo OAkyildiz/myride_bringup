@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+    <arg name="record" default="false"/>
+    <arg name="usbcam" default="true"/>
+    <arg name="zed_name" default="zed"/>
+    <arg name="zed_param" default="720p"/>
+    <arg name="svo_file" default=""/>
+
+    <!-- zed -->
+    <!-- web_server -->
+    <!-- demo_controller -->
+    <!-- perception -->
+    <!-- optional?=: record -->
+
+    <remap from="$(arg zed_name)/rgb/image_rect_color" to="$(arg zed_name)/image_raw"/>
+
+    <include if="$(arg usbcam)" file="$(dirname)/include/usb_cam.launch"></include>
+
+    <include unless="$(arg usbcam)" file="$(dirname)/include/zed_no_tf.launch">
+        <arg name="node_name" value="$(arg zed_name)"/>
+        <arg name="param_file" value="$(arg zed_param)"/>
+        <arg name="svo_file" value="$(arg svo_file)"/>
+        <arg name="publish_urdf" value="false" />
+        <!-- <arg if="$(arg stream)" name="stream" value="$(env ROS_IP):8000"/> -->
+        <!-- <remap from="/zed/rgb/image_rect_color" to="zed/image_raw"/> -->
+
+    </include>
+
+    <include file="$(find roscco)/launch/myride_oscc.launch"/>
+
+    <node pkg="myride_controller" type="demo_controller.py" name="demo_controller_node" output="screen"/>
+
+    <arg name="topics_tf" value="/throttle_report /brake_report /steering_report /oscc/brake /oscc/speed /oscc/steering /oscc/throttle /can_frame /zed/image_raw /zed/right/image_rect_color /zed/depth/depth_registered /zed/disparity/disparity_image /zed/odom /zed/pose"/>
+    <arg name="topics_full" value="/throttle_report /brake_report /steering_report /oscc/brake /oscc/speed /oscc/steering /oscc/throttle /can_frame /zed/image_raw /zed/right/image_rect_color /zed/depth/depth_registered"/>
+    <arg name="topics_lite" value="/throttle_report /brake_report /steering_report /oscc/speed /zed/image_raw"/>
+    <arg name="topics_can" value="/can_frame"/>
+
+
+    <include if="$(arg record)" file="$(dirname)/include/record_data.launch">
+        <arg name="file" value="driving_data"/>
+        <arg name="topics" value ="$(arg topics_full)"/>
+    </include>
+
+</launch>

@@ -11,7 +11,7 @@
 
   <!-- Zed -->
   <arg name="zed_ns"		    	    default="zed" />
-  <arg name="zed_node_name"       default="zed_node" />
+  <arg name="zed_node_name"       default="" />
   <arg name="channel"             default="rgb/image_rect_color"/>
   <arg name="dev"                 default="1"/>
 
@@ -30,7 +30,7 @@
 
   <!-- Launch Zed or USBCAM-->
   <group if="$(arg zed)">
-    <include unless="$(arg mapping)" file="$(find zed_wrapper)/launch/zed.launch" >
+    <include unless="$(arg mapping)" file="$(dirname)/invlude/zed_no_tf.launch" >
     </include>
 
     <include if="$(arg mapping)" file="$(dirname)/include/zed_mapping.launch" >

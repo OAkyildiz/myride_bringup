@@ -1,0 +1,27 @@
+<launch>
+  <arg name="bagfile" default="/opt/data/church_driving_720_ccw_2021-01-20-13-05-56.bag" />
+  <arg name="player" default="true" />
+  <arg name="torque" default="false" />
+  <arg name="oscc" default="true" />
+  <arg unless="$(arg torque)" name="pb_type" value="driving_playback.py" />
+  <arg if="$(arg torque)" name="pb_type" value="driving_playback_torque.py" />
+
+  
+
+  <group if="$(arg player)">
+    <arg  name="player_name" default="data_player" />
+    <node  pkg="rosbag" type="play" name="$(arg player_name)"  args="--clock --pause $(arg bagfile)"/>
+    <node name="driving_playback" pkg="myride_controller" type="$(arg pb_type)" output="screen" args="$(arg player_name)"/>
+  </group>
+
+
+  <group unless="$(arg player)">
+    <!-- redundant if we can pass False, empty str -->
+    <node name="driving_playback" pkg="myride_controller" type="$(arg pb_type)" output="screen"   /> 
+  </group>
+<!--   "wait-for-subscribers" -->
+
+  <node if="$(arg oscc)" name="roscco_node" pkg="roscco" type="roscco_node" output="screen"/>
+
+
+</launch>
